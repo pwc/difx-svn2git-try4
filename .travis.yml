@@ -29,6 +29,7 @@ matrix:
   include:
   - python: 2.7
     env: TRAVIS_IPP=TRUE
+  - python: 2.7
 
 git:
   depth: 99999
