@@ -25,12 +25,22 @@ addons:
 python:
   - 2.7
 
+matrix:
+  include:
+  - python: 2.7
+    env: TRAVIS_IPP=TRUE
+  - python: 2.7
+
 git:
   depth: 99999
 
 install:
-  - DIFXROOT_OVERRIDE=$PWD . setup/setup.bash
-  - python2 setup/install-difx --noipp
+  - . travis-ipp.bash
+  - cp setup/setup.bash .
+  - cp setup/install-difx .
+  - cp setup/genippc .
+  - DIFXROOT_OVERRIDE=$PWD . setup.bash
+  - python2 install-difx $IPPARG
 
 script:
   - /bin/true
