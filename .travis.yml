@@ -36,20 +36,13 @@ git:
 
 install:
   - . travis-ipp.bash
+  # copy these because running them from setup/ does not work
   - cp setup/setup.bash .
   - cp setup/install-difx .
   - cp setup/genipppc .
+
   - DIFXROOT_OVERRIDE=$PWD . setup.bash
-
-  # debugging
-  - pwd
-  - ls -l setup/genipppc
-  - which python
-  - setup/genipppc
-  - ./genipppc
-  # end debugging
-
-  - python2 install-difx $IPPARG
+  - python install-difx $IPPARG
 
 script:
   - /bin/true
