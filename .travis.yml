@@ -38,7 +38,7 @@ install:
   - . travis-ipp.bash
   - cp setup/setup.bash .
   - cp setup/install-difx .
-  - cp setup/genippc .
+  - cp setup/genipppc .
   - DIFXROOT_OVERRIDE=$PWD . setup.bash
   - python2 install-difx $IPPARG
 
