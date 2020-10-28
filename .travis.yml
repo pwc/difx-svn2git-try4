@@ -25,12 +25,25 @@ addons:
 python:
   - 2.7
 
+matrix:
+  include:
+  - python: 2.7
+    env: IPP=TRUE
+
 git:
   depth: 99999
 
 install:
+  # ipp
+  - if [[ "$IPP" == "TRUE" ]]; then
+      echo deb https://apt.repos.intel.com/ipp all main > /etc/apt/sources.list.d/intel-ipp.list
+      apt-get install intel-ipp-64bit
+      IPPARG=""
+    else
+      IPPARG="--noipp"
+    fi
   - DIFXROOT_OVERRIDE=$PWD . setup.bash
-  - python2 install-difx --noipp
+  - python2 install-difx $IPPARG
 
 script:
   - /bin/true
