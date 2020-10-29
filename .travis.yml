@@ -28,11 +28,13 @@ python:
 matrix:
   fast_finish: true
   allow_failures:
-  - python: 2.7  # without ipp
+  - python: 2.7
+    env: TRAVIS_IPP=FALSE
   include:
   - python: 2.7
     env: TRAVIS_IPP=TRUE
   - python: 2.7
+    env: TRAVIS_IPP=FALSE
 
 git:
   depth: 99999
