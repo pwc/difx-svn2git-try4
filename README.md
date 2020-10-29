@@ -1,6 +1,19 @@
 # DiFX
 
-[![Build Status](https://travis-ci.com/difx/difx-svn2git-try4.svg?branch=master)](https://travis-ci.com/difx/difx-svn2git-try4)
+[![Build Status](https://travis-ci.com/difx/difx-svn2git-try4.svg?branch=master)](https://travis-ci.com/difx/difx-svn2git-try4) [Branch build status](https://travis-ci.com/github/difx/difx-svn2git-try4/branches)
+
+## A note about file history
+
+This repo has a lot of files which have been renamed over the years. To see
+the full history of a file through all of the renames, add `--follow` to the
+`git log` command:
+
+`$ git log -p --follow README.md`
+
+The above log also illustrates a cosmetic problem we have with file history
+thanks to the svn-to-git conversion in 2020: some svn branch creation events
+have caused a large number of spurious file deletions in individual file
+histories. No content has been lost.
 
 ## Installation
 
