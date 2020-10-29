@@ -1,4 +1,8 @@
-#### INSTALLATION ##############
+# DiFX
+
+[![Build Status](https://travis-ci.com/difx/difx-svn2git-try4.svg?branch=master)](https://travis-ci.com/difx/difx-svn2git-try4)
+
+## Installation
 
 To install the latest trunk version of a clean SVN checkout of DiFX, follow
 these simple instructions:
@@ -14,6 +18,6 @@ this to your .bashrc or .cshrc files
 Thats it. DiFX should compile - if not, check out the troubleshooting
 area on http://www.atnf.csiro.au/vlbi/dokuwiki/doku.php/difx/start
 
-#### TESTING ####################
+## Testing
 
 See http://www.atnf.csiro.au/dokuwiki/doku.php/difx/benchmarks
