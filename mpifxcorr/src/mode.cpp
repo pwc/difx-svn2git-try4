@@ -648,6 +648,9 @@ float Mode::unpack(int sampleoffset, int subloopindex)
 
 void Mode::process(int index, int subloopindex)  //frac sample error is in microseconds 
 {
+  static ofstream debug_file("debug_file.log");
+  debug_file << std::scientific << std::setprecision(17);
+
   double phaserotation, averagedelay, nearestsampletime, starttime, lofreq, walltimesecs, fracwalltime, fftcentre, d0, d1, d2, fraclooffset;
   f32 phaserotationfloat, fracsampleerror;
   int status, count, nearestsample, integerdelay, RcpIndex, LcpIndex, intwalltime;
@@ -1181,6 +1184,53 @@ void Mode::process(int index, int subloopindex)  //frac sample error is in micro
             break;
           case 1: // Linear
           case 2: // Quadratic
+            for(size_t k = 0; k < fftchannels; ++k) {
+              // single-precision calculation
+              // These are the "green crosses"
+              const float bigA_f = a * lofreq/fftchannels - sampletime*1.e-6*recordedfreqlooffsets[i];
+              const float bigB_f = b*lofreq   // NOTE - no division by /fftchannels here
+                                   + (lofreq-int(lofreq))*integerdelay
+                                   - recordedfreqlooffsets[i]*fracwalltime
+                                   - fraclooffset*intwalltime;
+              const float exponent_f = (bigA_f * k + bigB_f);
+              const std::complex<float> cr_f = exp( std::complex<float>(0, -TWO_PI) * ( exponent_f - int(exponent_f) ) );
+              // double-precision calculation
+              // These are the "big blue (open) circles"
+              const double bigA_d = a * lofreq/fftchannels - sampletime*1.e-6*recordedfreqlooffsets[i];
+              const double bigB_d = b*lofreq   // NOTE - no division by /fftchannels here
+                                   + (lofreq-int(lofreq))*integerdelay
+                                   - recordedfreqlooffsets[i]*fracwalltime
+                                   - fraclooffset*intwalltime;
+              const double exponent_d = (bigA_d * k + bigB_d);
+              const std::complex<double> cr_d = exp( std::complex<double>(0, -TWO_PI) * ( exponent_d - int(exponent_d) ) );
+
+              // double-precision calculation, using an earlier range-reduction
+              // These are the "red asterisks"
+              const double exponent_early_d = (bigA_d * k + ( bigB_d - int(bigB_d) ) );
+              // In the next line I write 'exponent_early_d' but you can also
+              // explicitly reduce the range if you like (i.e. by writing
+              // 'exponent_earlyd - int(exponent_d)' as above)
+              const std::complex<double> cr_early_d = exp( std::complex<double>(0, -TWO_PI) * ( exponent_early_d ) );
+
+              // single-precision, early range-reduction calculation
+              // These are the "orange squares"
+              const float exponent_early_f = (bigA_f * k + ( bigB_f - int(bigB_f) ) );
+              const std::complex<float> cr_early_f = exp( std::complex<float>(0, -TWO_PI) * ( exponent_early_f ) );
+
+              // print out stuff for debugging
+              debug_file << k << "\t"                    // col 1
+                << complexrotator[k].re << "\t"          // col 2
+                << complexrotator[k].im << "\t"          // col 3
+                << cr_f.real() << "\t"                   // col 4
+                << cr_f.imag() << "\t"                   // col 5
+                << cr_d.real() << "\t"                   // col 6
+                << cr_d.imag() << "\t"                   // col 7
+                << cr_early_f.real() << "\t"             // col 8
+                << cr_early_f.imag() << "\t"             // col 9
+                << cr_early_d.real() << "\t"             // col 10
+                << cr_early_d.imag() << "\t"             // col 11
+                << std::endl;
+            }
             if (usecomplex) {
               status = vectorMul_cf32(complexrotator, &unpackedcomplexarrays[j][nearestsample - unpackstartsamples], complexunpacked, fftchannels);
               // The following can be uncommented (and the above commented) if wanting to 'turn off' fringe rotation for testing in the complex case
@@ -1242,6 +1292,9 @@ void Mode::process(int index, int subloopindex)  //frac sample error is in micro
               csevere << startl << "Error copying FFT results!!!" << endl;
             break;
         }
+        // Comment this if you want to print out more than one band of
+        // debugging info
+        exit(1);
 
 	// At this point in the code the array fftoutputs[j] contains complex-valued voltage spectra with the following properties:
 	//
